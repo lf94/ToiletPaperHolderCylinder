@@ -68,9 +68,5 @@ const main = ({ Sketcher, sketchPolysides, sketchCircle, Plane }, {}) => {
     .fuse(outerBasePolygonalTop)
     .cut(outerNegative);
 
-  return innerCylinder.fuse(
-    outerCylinder
-      .rotate(180, [0,0,0], [0,1,0])
-      .translate([offsetX+58+24+97, 0, 0])
-  );
+  return [innerCylinder, outerCylinder];
 };
