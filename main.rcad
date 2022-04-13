@@ -1,0 +1,76 @@
+// All measurements in mm
+
+const defaultParams = {
+};
+
+const main = ({ Sketcher, sketchPolysides, sketchCircle, Plane }, {}) => {
+  const innerBase = new Sketcher("XZ")
+    .vLine(2.5)
+    .hLine(6)
+    .vLine(2)
+    .hLine(3)
+    .vLine(3)
+    .hLine(4)
+    .vLine(1.5)
+    .hLine(4)
+    .vLine(1)
+    .hLine(58)
+    .vLine(1)
+    .hLine(19)
+    .vLine(-(2.5+2+3+1.5+1+1))
+    .close()
+    .revolve([1, 0, 0]);
+
+  const offsetX = 6+3+4+4;
+  const innerNegative = new Sketcher("XZ")
+    .vLine(8)
+    .hLine(4)
+    .vLine(1)
+    .hLine(58 + 24 - 1)
+    .vLine(-(8+1))
+    .close()
+    .revolve([1, 0, 0])
+    .translate([offsetX-3, 0, 0])
+
+  const innerCylinder = innerBase.cut(innerNegative)
+
+  const outerBaseLowerPortion = new Sketcher("XZ")
+    .vLine(2.5)
+    .hLine(6)
+    .vLine(2)
+    .hLine(3)
+    .vLine(3)
+    .hLine(4)
+    .vLine(1)
+    .hLine(4)
+    .vLine(3)
+    .hLine(58)
+    .vLine(-(2.5+2+3+1+3))
+    .close()
+    .revolve([1, 0, 0]);
+
+  const outerBasePolygonalTop = sketchPolysides(25/2, 10)
+    .extrude(24)
+    .rotate(90, [0,0,0], [0,1,0])
+    .translate([offsetX+58, 0, 0]);
+
+  const outerNegative = new Sketcher("XZ")
+    .vLine(8)
+    .hLine(4)
+    .vLine(3)
+    .hLine(58 + 24 - 1)
+    .vLine(-(8+3))
+    .close()
+    .revolve([1, 0, 0])
+    .translate([offsetX-3, 0, 0])
+
+  const outerCylinder = outerBaseLowerPortion
+    .fuse(outerBasePolygonalTop)
+    .cut(outerNegative);
+
+  return innerCylinder.fuse(
+    outerCylinder
+      .rotate(180, [0,0,0], [0,1,0])
+      .translate([offsetX+58+24+97, 0, 0])
+  );
+};
